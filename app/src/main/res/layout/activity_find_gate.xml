@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Gate.GateActivity"
+    android:screenOrientation="landscape">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <SurfaceView
+            android:id="@+id/CameraView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        </SurfaceView>
+
+        <SurfaceView
+            android:id="@+id/TransparentView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        </SurfaceView>
+
+        <LinearLayout
+            android:id="@+id/buttonList"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="2dp"
+            android:layout_marginRight="0dp"
+            android:layout_marginStart="2dp"
+            android:layout_gravity="bottom"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toLeftOf="@id/display"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintHorizontal_bias="0.0">
+
+            <Button
+                android:id="@+id/button_x"
+                android:textAllCaps="false"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_weight="1"
+                android:onClick="changeX"
+                android:gravity="center"
+                android:text="@string/gate_button_x"
+                android:textSize="12sp" />
+
+            <Button
+                android:id="@+id/button_y"
+                android:textAllCaps="false"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_weight="1"
+                android:onClick="changeY"
+                android:text="@string/gate_button_y"
+                android:textSize="12sp" />
+
+            <Button
+                android:id="@+id/button_reset"
+                android:textAllCaps="false"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="@android:dimen/thumbnail_width"
+                android:layout_weight="1"
+                android:onClick="pressReset"
+                android:text="@string/gate_button_reset"
+                android:textSize="12sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/display"
+            android:layout_width="@android:dimen/thumbnail_width"
+            android:layout_height="match_parent"
+            android:layout_gravity="end"
+            android:background="@color/whiteBackground"
+            android:orientation="vertical"
+            app:layout_constraintVertical_bias="1.0">
+
+            <TextView
+                android:id="@+id/text_view"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_gravity="top"
+                android:layout_margin="8dp"
+                android:layout_weight="1"
+                android:textAlignment="center"
+                android:textColor="@android:color/black"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:id="@+id/truthTable"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_gravity="center"
+                android:layout_margin="8dp"
+                android:layout_weight="3"
+                app:layout_constraintBottom_toTopOf="@id/switchButton"
+                app:layout_constraintTop_toBottomOf="@id/text_view" />
+
+            <Button
+                android:id="@+id/switchButton"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_gravity="bottom"
+                android:layout_margin="8dp"
+                android:layout_weight="1"
+                android:onClick="switchMode"
+                android:text="@string/gate_toTransistors" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/xText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="2dp"
+            android:layout_marginRight="0dp"
+            android:layout_marginStart="2dp"
+            android:background="#07000000"
+            android:textAlignment="center"
+            android:textColor="@color/greenText"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/yText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="2dp"
+            android:layout_marginRight="0dp"
+            android:layout_marginStart="2dp"
+            android:background="#07000000"
+            android:textAlignment="center"
+            android:textColor="@color/greenText"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/fText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="2dp"
+            android:layout_marginRight="0dp"
+            android:layout_marginStart="2dp"
+            android:background="#07000000"
+            android:textAlignment="center"
+            android:textColor="@color/greenText"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+    </FrameLayout>
+</android.support.constraint.ConstraintLayout>
+

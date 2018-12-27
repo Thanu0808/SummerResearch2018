@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".FSM.FSMActivity"
+    android:screenOrientation="landscape">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <SurfaceView
+            android:id="@+id/CameraView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"></SurfaceView>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left|bottom"
+            android:layout_marginBottom="0dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/input1"
+                android:textAllCaps="false"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginBottom="0dp"
+                android:layout_weight="1"
+                android:onClick="pressInput1"/>
+
+            <Button
+                android:id="@+id/input2"
+                android:textAllCaps="false"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginBottom="0dp"
+                android:layout_weight="1"
+                android:onClick="pressInput2"/>
+
+            <Button
+                android:id="@+id/input3"
+                android:textAllCaps="false"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginBottom="0dp"
+                android:layout_weight="1"
+                android:onClick="pressInput3"/>
+
+            <Button
+                android:id="@+id/input4"
+                android:textAllCaps="false"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginBottom="0dp"
+                android:layout_weight="1"
+                android:onClick="pressInput4"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|bottom"
+            android:layout_marginBottom="0dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/nextButton"
+                android:textAllCaps="false"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="5dp"
+                android:layout_marginBottom="0dp"
+                android:text="@string/fsm_next_button"
+                android:layout_weight="1"
+                android:onClick="pressNext"/>
+
+            <Button
+                android:id="@+id/resetButton"
+                android:textAllCaps="false"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="5dp"
+                android:layout_marginBottom="0dp"
+                android:text="@string/fsm_reset_button"
+                android:layout_weight="1"
+                android:onClick="pressReset"/>
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/arrow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/green_arrow" />
+
+        <ImageView
+            android:id="@+id/AnimationView"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:screenOrientation="landscape">
+        </ImageView>
+
+    </FrameLayout>
+</android.support.constraint.ConstraintLayout>
