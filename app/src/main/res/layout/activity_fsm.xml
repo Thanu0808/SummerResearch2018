@@ -108,5 +108,17 @@
             android:screenOrientation="landscape">
         </ImageView>
 
+        <ImageView
+            android:id="@+id/locator"
+            android:layout_width="22dp"
+            android:layout_height="32dp"
+            app:srcCompat="@drawable/animation_rl_frame2" />
+
+        <ImageView
+            android:id="@+id/locator2"
+            android:layout_width="22dp"
+            android:layout_height="32dp"
+            app:srcCompat="@drawable/animation_rl_frame2" />
+
     </FrameLayout>
 </android.support.constraint.ConstraintLayout>

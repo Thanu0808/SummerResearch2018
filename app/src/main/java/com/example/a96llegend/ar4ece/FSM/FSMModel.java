@@ -10,7 +10,7 @@ import java.util.Set;
 import android.util.Log;
 //This contains the model of FSM which defines the structure and framework of FSMs
 public class FSMModel {
-
+    private static final String tag = "=======Debug=======";
     //Store all state's name
     private static List<String> allState;
     //Store all input and their current value, by default it should be false
@@ -21,9 +21,14 @@ public class FSMModel {
     private static String currentState;
 
     public FSMModel(List<String> allEquations){//allEquations is list of boolean equations, "__+__=__"
+//        Log.d(tag, "allEquations is " + allEquations);
         //Parsing FSM data
         allBooleanEquation = FSMParser.getBooleanEquation(allEquations); //List<ArrayList<String>> of 1st State,Condition,2nd State
         allState = FSMParser.getAllStateFromAllBooleanEquation(allBooleanEquation);//List<String> with all states
+
+//        for(int i=0;i<allBooleanEquation.size();i++){
+//            Log.d(tag, "allBooleanEquation is " + allBooleanEquation.get(i));
+//        }
 
         allInput = new HashMap<String, Boolean>();
         List<String> allInputList = FSMParser.getAllInputFromAllBooleanEquation(allBooleanEquation);//List<string> with all conditions
@@ -97,10 +102,15 @@ public class FSMModel {
     public String getCurrentState(){
         return currentState;
     }
-
+    //Returns Current state as index and not a boolean
     public int getCurrentStateAsIndex(){
+      //  Log.d(tag, "Size of All State is "+Integer.toString(allState.size()));
         for (int i = 0; i < allState.size(); i++){
+           // Log.d(tag, "Into the for loop");
+            //Log.d(tag, "Current State is"+currentState);
+            //Log.d(tag, "Current Item in All State is " + allState.get(i));
             if(allState.get(i).equals(currentState)){
+             //   Log.d(tag, "A match");
                 return i;
             }
         }
@@ -109,6 +119,7 @@ public class FSMModel {
 
 
     //Check if the condition(s) match
+    //Used in triggerStateChange
     private boolean matchCondition(String allConditions){
         //If the condition is "-", means state will change no matter what input is
         if (allConditions.equals("-")) {

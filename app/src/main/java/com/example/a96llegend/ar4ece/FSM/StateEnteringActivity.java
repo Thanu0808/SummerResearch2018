@@ -89,7 +89,9 @@ public class StateEnteringActivity extends AppCompatActivity {
             if(!state4.equals("")) {
                 allState.add(3, state4);
             }
-
+//            for(int i=0;i<allState.size();i++) {
+//                Log.d(tag, "AllState is" + allState.get(i));
+//            }
             //To next activity
             Intent intent = new Intent(this, FSMScaningActivity.class);
             intent.putStringArrayListExtra("stateList", allState);

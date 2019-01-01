@@ -44,7 +44,8 @@ public class FSMScaningActivity extends AppCompatActivity {
     private static List<String> statesName = new ArrayList<String>();
     private static List<String> booleanEquations = new ArrayList<String>();
     private static List<Rect> stateLocation = new ArrayList<Rect>();
-    //TTprivate static int numberOfStates;
+    private static int numberOfStates;
+    private static boolean stateMatch;
 
     //Delay for better UX
     private static boolean scanLock;
@@ -67,7 +68,7 @@ public class FSMScaningActivity extends AppCompatActivity {
         //Initialise
         //Get stateList from intent in StateEnteringActivity(the entered states from user)
         statesName = (ArrayList<String>) getIntent().getStringArrayListExtra("stateList");
-        //TTnumberOfStates = statesName.size();
+        numberOfStates = statesName.size();
         //Default conditions for state transitions
         for (int i = 0; i < statesName.size()-1; i++) {
             booleanEquations.add(i, statesName.get(i) + "=" + statesName.get(i+1));
@@ -161,16 +162,28 @@ public class FSMScaningActivity extends AppCompatActivity {
                         for(int i=0;i<items.size();i++){
                             TextBlock currentItem = items.valueAt(i);
                             Log.d(tag, "Found: " + currentItem.getValue());
-
+                            //Log.d(tag, "numberOfStates is " + Integer.toString(numberOfStates));
                             //Find state position
                             //Store State locations and conditions
-                            if(currentItem.getValue().equals(statesName.get(0))){
-                                stateLocation.add(0, currentItem.getBoundingBox());
-                            } else if (currentItem.getValue().equals(statesName.get(1))){
-                                stateLocation.add(1, currentItem.getBoundingBox());
-                            } else {
-                                conditions.add(currentItem);
+                            stateMatch = true;
+                            for(int j=0;j<numberOfStates;j++){
+                                if(currentItem.getValue().equals(statesName.get(j))){
+                                    stateLocation.add(j,currentItem.getBoundingBox());
+                                    stateMatch = false;
+                                }
                             }
+                            if(stateMatch){
+                                conditions.add(currentItem);
+                            //    Log.d(tag, "Condition is " + currentItem.getValue());
+                            }
+
+//                            if(currentItem.getValue().equals(statesName.get(0))){
+//                                stateLocation.add(0, currentItem.getBoundingBox());
+//                            } else if (currentItem.getValue().equals(statesName.get(1))){
+//                                stateLocation.add(1, currentItem.getBoundingBox());
+//                            } else {
+//                                conditions.add(currentItem);
+//                            }
                         }
 
                         //Search for location
@@ -185,7 +198,7 @@ public class FSMScaningActivity extends AppCompatActivity {
                             boolean noConditionTop = true;
                             boolean noConditionBottom = true;
                             //Thanushan: part that needs to be changed for 3/4 state fsm
-
+                            //Log.d(tag, "ConditionSize is " + conditions.size());
                             for (int i = 0; i < conditions.size(); i++) {
                                 Rect currentBlock = conditions.get(i).getBoundingBox();
                                 String name = conditions.get(i).getValue();
@@ -267,9 +280,13 @@ public class FSMScaningActivity extends AppCompatActivity {
                         stateLocation.clear();
 
                         //Re-initialised
-                        booleanEquations.add(0, statesName.get(0) + "=" + statesName.get(1));
-                        booleanEquations.add(1, statesName.get(1) + "=" + statesName.get(0));
-                        //Thanushan
+//                        booleanEquations.add(0, statesName.get(0) + "=" + statesName.get(1));
+//                        booleanEquations.add(1, statesName.get(1) + "=" + statesName.get(0));
+
+                        for (int i = 0; i < statesName.size()-1; i++) {
+                            booleanEquations.add(i, statesName.get(i) + "=" + statesName.get(i+1));
+                        }
+                        booleanEquations.add(statesName.size()-1,statesName.get(statesName.size()-1) + "=" + statesName.get(0));
 
                         //Add delay
                         scanLockHandler.removeCallbacks(scanLockTimer);
@@ -284,19 +301,50 @@ public class FSMScaningActivity extends AppCompatActivity {
     private ArrayList<String> sortBooleanEquation(){
         ArrayList<String> firstStateEquation = new ArrayList<String>();
         ArrayList<String> secondStateEquation = new ArrayList<String>();
+        ArrayList<String> thirdStateEquation = new ArrayList<String>();
+        ArrayList<String> fourthStateEquation = new ArrayList<String>();
+        ArrayList<Integer> length = new ArrayList<Integer>();
+        for(int j=0;j<statesName.size();j++){
+            length.add(j,statesName.get(j).length());
+        }
+//        Log.d(tag, "BooleanEquation from scanner is " + booleanEquations);
+//        Log.d(tag, "statesName is " + statesName);
+//        Log.d(tag, "length is " + length);
         for(int i = 0; i < booleanEquations.size(); i++){
-            int length = statesName.get(0).length();
-            if(booleanEquations.get(i).substring(0, length).equals(statesName.get(0))){
+           // int length = statesName.get(0).length();
+            if(booleanEquations.get(i).substring(0, length.get(0)).equals(statesName.get(0))){
                 firstStateEquation.add(booleanEquations.get(i));
-            } else {
+            } else if (booleanEquations.get(i).substring(0, length.get(1)).equals(statesName.get(1))){
                 secondStateEquation.add(booleanEquations.get(i));
             }
+            if(length.size()>2){
+                if(booleanEquations.get(i).substring(0, length.get(2)).equals(statesName.get(2))){
+                    thirdStateEquation.add(booleanEquations.get(i));
+                }
+            }
+            if(length.size()>3){
+                if(booleanEquations.get(i).substring(0, length.get(3)).equals(statesName.get(3))){
+                    fourthStateEquation.add(booleanEquations.get(i));
+                }
+            }
         }
-
+//        Log.d(tag, "firstStateEquation: " + firstStateEquation);
+//        Log.d(tag, "secondStateEquation: " + secondStateEquation);
+//        Log.d(tag, "thirdStateEquation: " + thirdStateEquation);
+//        Log.d(tag, "fourthStateEquation: " + fourthStateEquation);
         //Merge two list
         for (int i = 0; i < secondStateEquation.size(); i++){
             firstStateEquation.add(secondStateEquation.get(i));
         }
+        for (int i = 0; i < thirdStateEquation.size(); i++){
+            firstStateEquation.add(thirdStateEquation.get(i));
+        }
+        for (int i = 0; i < fourthStateEquation.size(); i++){
+            firstStateEquation.add(fourthStateEquation.get(i));
+        }
+
+//        Log.d(tag, "SortBooleanEquations " + firstStateEquation);
+
         return firstStateEquation;
     }
 }

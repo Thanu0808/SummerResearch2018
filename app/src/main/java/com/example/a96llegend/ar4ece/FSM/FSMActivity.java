@@ -58,6 +58,8 @@ public class FSMActivity extends AppCompatActivity {
     private static SurfaceView mCameraView;
     private static CameraSource mCameraSource;
     private static ImageView arrowView;
+    private static ImageView locatorView;
+    private static ImageView locatorView2;
     private static ImageView mAnimationView;
     private static Button input1Button;
     private static Button input2Button;
@@ -71,6 +73,7 @@ public class FSMActivity extends AppCompatActivity {
     private static Map<String, Rect> topZone = new HashMap<String, Rect>();
     //All conditions at bottom zone
     private static Map<String, Rect> bottomZone = new HashMap<String, Rect>();
+    private static boolean stateMatch;
 
     //Animation
     private static Animation animationFadeIn;
@@ -93,6 +96,8 @@ public class FSMActivity extends AppCompatActivity {
 
         mCameraView = (SurfaceView) findViewById(R.id.CameraView);
         arrowView = (ImageView) findViewById(R.id.arrow);
+        locatorView = (ImageView) findViewById(R.id.locator);
+        locatorView2 = (ImageView) findViewById(R.id.locator2);
         mAnimationView = (ImageView) findViewById(R.id.AnimationView);
         input1Button = (Button) findViewById(R.id.input1);
         input2Button = (Button) findViewById(R.id.input2);
@@ -107,10 +112,12 @@ public class FSMActivity extends AppCompatActivity {
 
         //Initialise FSM
         //
-        List<String> equationList = (ArrayList<String>) getIntent().getStringArrayListExtra("equationList");
+        List<String> equationList = (ArrayList<String>) getIntent().getStringArrayListExtra("equationList");//from scanning activity
+        Log.d(tag, "equationList is " + equationList);
         fsm = new FSMModel(equationList);
 
         arrowView.setVisibility(View.GONE);
+        //locatorView.setVisibility(View.GONE);
         setButtons();
 
         //Sound
@@ -210,16 +217,30 @@ public class FSMActivity extends AppCompatActivity {
                     if (items.size() != 0 ){
                         for(int i=0;i<items.size();i++){
                             TextBlock currentItem = items.valueAt(i);
-                            if(currentItem.getValue().equals(fsm.getAllStateName().get(0))){
-                                states.put(currentItem.getValue(), currentItem.getBoundingBox()); //State 1
-                            } else if (currentItem.getValue().equals(fsm.getAllStateName().get(1))){
-                                states.put(currentItem.getValue(), currentItem.getBoundingBox()); //State 2
-                            } else {
-                                if (currentItem.getValue().indexOf("Start") == -1){ //Ignore "Start"
+//                            if(currentItem.getValue().equals(fsm.getAllStateName().get(0))){
+//                                states.put(currentItem.getValue(), currentItem.getBoundingBox()); //State 1
+//                            } else if (currentItem.getValue().equals(fsm.getAllStateName().get(1))){
+//                                states.put(currentItem.getValue(), currentItem.getBoundingBox()); //State 2
+//                            } else {
+//                                if (currentItem.getValue().indexOf("Start") == -1){ //Ignore "Start"
+//                                    conditions.add(currentItem);
+//                                }
+//                            }
+                            stateMatch = true;
+                            for(int j=0;j<fsm.getAllStateName().size();j++){
+                                if(currentItem.getValue().equals(fsm.getAllStateName().get(j))){
+                                    states.put(currentItem.getValue(), currentItem.getBoundingBox());
+                                    stateMatch = false;
+                                }
+                            }
+                            if(stateMatch){
+                                if (currentItem.getValue().indexOf("Start") == -1) { //Ignore "Start"
                                     conditions.add(currentItem);
                                 }
                             }
                         }
+
+
 
                         //Now where ths condition is locate at, If states are not found, don't do it
                         if(states.get(fsm.getAllStateName().get(0)).top != 0 && states.get(fsm.getAllStateName().get(1)).top != 0) {
@@ -253,6 +274,14 @@ public class FSMActivity extends AppCompatActivity {
     //=====================================View===============================================
     private void setOverlay(){
         if (runAnimation){ //Arrow when running animation
+//            int offset = states.get(fsm.getAllStateName().get(0)).right-states.get(fsm.getAllStateName().get(0)).left;
+//            locatorView.setX(states.get(fsm.getAllStateName().get(0)).right+offset);
+//            locatorView.setY(states.get(fsm.getAllStateName().get(0)).centerY());
+//
+//            int offset2 = states.get(fsm.getAllStateName().get(1)).right-states.get(fsm.getAllStateName().get(1)).left;
+//            locatorView2.setX(states.get(fsm.getAllStateName().get(1)).right+offset2);
+//            locatorView2.setY(states.get(fsm.getAllStateName().get(1)).centerY());
+
             //Use UI thread to turn on the arrow
             Activity uiActivity = (Activity)FSMActivity.this;
             uiActivity.runOnUiThread(new Runnable(){
@@ -350,47 +379,78 @@ public class FSMActivity extends AppCompatActivity {
             int oldState = fsm.getCurrentStateAsIndex();
             String conditionToFind = fsm.triggerStateChange();
             int newState = fsm.getCurrentStateAsIndex();
-
-            //Determine what should be run
-            if (oldState == 0 && newState == 1) {
-                animationStep = 0;
-                mAnimationView.setX(states.get(fsm.getAllStateName().get(0)).centerX() - 20);
-                mAnimationView.setY(states.get(fsm.getAllStateName().get(0)).centerY() - 20);
-
+           // Log.d(tag, "Test 0");
+            if(oldState!=newState){
+             //   Log.d(tag, "Test 1");
+                animationStep=0;
+                mAnimationView.setX(states.get(fsm.getAllStateName().get(oldState)).centerX() - 40);
+                mAnimationView.setY(states.get(fsm.getAllStateName().get(oldState)).centerY() - 40);
+             //   Log.d(tag, "Test 2");
                 //If condition = "-", set the middle point in the middle, so that travel in a straight line
                 if(conditionToFind.equals("-")){
-                    int x = (states.get(fsm.getAllStateName().get(1)).centerX()+
-                            states.get(fsm.getAllStateName().get(0)).centerX()) / 2;
-                    int y = (states.get(fsm.getAllStateName().get(1)).centerY()+
-                            states.get(fsm.getAllStateName().get(0)).centerY()) / 2;
+//                    Log.d(tag, "Test 3,New State is" + Integer.toString(newState));
+                   // Log.d(tag, "X is:" + Integer.toString(states.get(fsm.getAllStateName().get(oldState)).centerX()));
+                  //  Log.d(tag, "X is:" + Integer.toString(states.get(fsm.getAllStateName().get(newState)).centerX()));
+                    int x = (states.get(fsm.getAllStateName().get(oldState)).centerX()+
+                            states.get(fsm.getAllStateName().get(newState)).centerX()) / 2;
+              //      Log.d(tag, "Test X");
+                    int y = (states.get(fsm.getAllStateName().get(oldState)).centerY()+
+                            states.get(fsm.getAllStateName().get(newState)).centerY()) / 2;
+              //      Log.d(tag, "Test Y");
                     Rect middle = new Rect(x - 20, y - 20, x + 20, y + 20);
+              //      Log.d(tag, "Test 4");
+                    animationPath = MathToolBox.pathCalculator(states.get(fsm.getAllStateName().get(oldState)),
+                            middle, states.get(fsm.getAllStateName().get(newState)));
+             //       Log.d(tag, "Test 5");
+                } else {//TT
+               //     Log.d(tag, "WTF");
                     animationPath = MathToolBox.pathCalculator(states.get(fsm.getAllStateName().get(0)),
-                            middle, states.get(fsm.getAllStateName().get(1)));
-                } else {
-                    animationPath = MathToolBox.pathCalculator(states.get(fsm.getAllStateName().get(0)),
-                            topZone.get(conditionToFind), states.get(fsm.getAllStateName().get(1)));
+                            topZone.get(conditionToFind), states.get(fsm.getAllStateName().get(1)));//THIS iS CAUSING CRASH CAUSE NOT BOTTOM ZONE ON 2nd part
                 }
-                startAnimation(0); //Left to right
-
-            } else if (oldState == 1 && newState == 0) {
-                animationStep = 0;
-                mAnimationView.setX(states.get(fsm.getAllStateName().get(1)).centerX() - 40);
-                mAnimationView.setY(states.get(fsm.getAllStateName().get(1)).centerY() - 40);
-
-                //If condition = "-", set the middle point in the middle, so that travel in a straight line
-                if(conditionToFind.equals("-")){
-                    int x = (states.get(fsm.getAllStateName().get(1)).centerX()+
-                            states.get(fsm.getAllStateName().get(0)).centerX()) / 2;
-                    int y = (states.get(fsm.getAllStateName().get(1)).centerY()+
-                            states.get(fsm.getAllStateName().get(0)).centerY()) / 2;
-                    Rect middle = new Rect(x - 20, y - 20, x + 20, y + 20);
-                    animationPath = MathToolBox.pathCalculator(states.get(fsm.getAllStateName().get(1)),
-                            middle, states.get(fsm.getAllStateName().get(0)));
-                } else {
-                    animationPath = MathToolBox.pathCalculator(states.get(fsm.getAllStateName().get(1)),
-                            bottomZone.get(conditionToFind), states.get(fsm.getAllStateName().get(0)));
-                }
-                startAnimation(1); //Right to left
+              //  Log.d(tag, "Test 6");
+                startAnimation(0); //Left to right TT
+                //Log.d(tag, "Test 7");
+ //           }
+            //---------------------Determine what should be run
+//            if (oldState == 0 && newState == 1) {
+//                animationStep = 0;
+//                mAnimationView.setX(states.get(fsm.getAllStateName().get(0)).centerX() - 20);
+//                mAnimationView.setY(states.get(fsm.getAllStateName().get(0)).centerY() - 20);
+//
+//                //If condition = "-", set the middle point in the middle, so that travel in a straight line
+//                if(conditionToFind.equals("-")){
+//                    int x = (states.get(fsm.getAllStateName().get(1)).centerX()+
+//                            states.get(fsm.getAllStateName().get(0)).centerX()) / 2;
+//                    int y = (states.get(fsm.getAllStateName().get(1)).centerY()+
+//                            states.get(fsm.getAllStateName().get(0)).centerY()) / 2;
+//                    Rect middle = new Rect(x - 20, y - 20, x + 20, y + 20);
+//                    animationPath = MathToolBox.pathCalculator(states.get(fsm.getAllStateName().get(0)),
+//                            middle, states.get(fsm.getAllStateName().get(1)));
+//                } else {
+//                    animationPath = MathToolBox.pathCalculator(states.get(fsm.getAllStateName().get(0)),
+//                            topZone.get(conditionToFind), states.get(fsm.getAllStateName().get(1)));
+//                }
+//                startAnimation(0); //Left to right
+//
+//            } else if (oldState == 1 && newState == 0) {
+//                animationStep = 0;
+//                mAnimationView.setX(states.get(fsm.getAllStateName().get(1)).centerX() - 40);
+//                mAnimationView.setY(states.get(fsm.getAllStateName().get(1)).centerY() - 40);
+//
+//                //If condition = "-", set the middle point in the middle, so that travel in a straight line
+//                if(conditionToFind.equals("-")){
+//                    int x = (states.get(fsm.getAllStateName().get(1)).centerX()+
+//                            states.get(fsm.getAllStateName().get(0)).centerX()) / 2;
+//                    int y = (states.get(fsm.getAllStateName().get(1)).centerY()+
+//                            states.get(fsm.getAllStateName().get(0)).centerY()) / 2;
+//                    Rect middle = new Rect(x - 20, y - 20, x + 20, y + 20);
+//                    animationPath = MathToolBox.pathCalculator(states.get(fsm.getAllStateName().get(1)),
+//                            middle, states.get(fsm.getAllStateName().get(0)));
+//                } else {
+//                    animationPath = MathToolBox.pathCalculator(states.get(fsm.getAllStateName().get(1)),
+//                            bottomZone.get(conditionToFind), states.get(fsm.getAllStateName().get(0)));
+//                }
+//                startAnimation(1); //Right to left
 
             } else if (oldState == 1 && newState == 1){ //state at state 2
                 animationStep = 0;

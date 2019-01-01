@@ -9,9 +9,10 @@ import java.util.List;
 //obtained from FSMScanningActivity.
 public class FSMParser {
 
+    private static final String tag = "=======Debug=======";
+
     public static List<ArrayList<String>> getBooleanEquation(List<String> allEquations){
         List<ArrayList<String>> equations = new ArrayList<ArrayList<String>>();
-
         for(int i = 0; i < allEquations.size(); i++){
             String[] terms = splitTerm(allEquations.get(i));
             ArrayList<String> singleEquation = new ArrayList<String>();
@@ -87,13 +88,14 @@ public class FSMParser {
 
         for(int i = 0; i < allBooleanEquations.size(); i++){
             String currentStateName = allBooleanEquations.get(i).get(0);
-
+//            Log.d(tag, "CurrentStateName in for loop: " + allBooleanEquations.get(i).get(0));
             //Found if it is exist already
             if(allState.size() == 0){
                 allState.add(currentStateName);
             } else {
                 boolean exist = false;
                 for (int j = 0; j < allState.size(); j++) {
+//                    Log.d(tag, "AllState.get(j) in for loop: " + allState.get(j));
                     if (allState.get(j).equals(currentStateName)) {
                         exist = true;
                         break;
