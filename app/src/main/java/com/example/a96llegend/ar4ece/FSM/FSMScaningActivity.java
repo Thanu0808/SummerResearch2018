@@ -69,6 +69,8 @@ public class FSMScaningActivity extends AppCompatActivity {
         //Get stateList from intent in StateEnteringActivity(the entered states from user)
         statesName = (ArrayList<String>) getIntent().getStringArrayListExtra("stateList");
         numberOfStates = statesName.size();
+        String thanushan = getIntent().getStringExtra("avatar");
+        Log.d(tag,"AVATAR IS : "+ thanushan);
         //Default conditions for state transitions
         for (int i = 0; i < statesName.size()-1; i++) {
             booleanEquations.add(i, statesName.get(i) + "=" + statesName.get(i+1));
@@ -157,8 +159,12 @@ public class FSMScaningActivity extends AppCompatActivity {
                 public void receiveDetections(Detector.Detections<TextBlock> detections) {
                     final SparseArray<TextBlock> items = detections.getDetectedItems();
                     List<TextBlock> conditions = new ArrayList<TextBlock>();
-
+                    Rect initial = new Rect(8, 8, 8, 8);
+                    for(int k=0;k<numberOfStates;k++){//initialising stateLocation list
+                        stateLocation.add(k,initial);
+                    }
                     if (items.size() != 0 && scanLock != true){
+//                        Log.d(tag,"Pls no");
                         for(int i=0;i<items.size();i++){
                             TextBlock currentItem = items.valueAt(i);
                             Log.d(tag, "Found: " + currentItem.getValue());
@@ -168,13 +174,20 @@ public class FSMScaningActivity extends AppCompatActivity {
                             stateMatch = true;
                             for(int j=0;j<numberOfStates;j++){
                                 if(currentItem.getValue().equals(statesName.get(j))){
+                                    stateLocation.remove(j);
                                     stateLocation.add(j,currentItem.getBoundingBox());
+//                                    Log.d(tag,"currentItem is "+currentItem.getValue()+" with j:"+j);
+//                                    Log.d(tag,"stateLocation X is "+stateLocation.get(j).centerX());
                                     stateMatch = false;
                                 }
                             }
+//                            Log.d(tag,"statesName is "+statesName);
+//                            for(int k=0;k<stateLocation.size();k++) {
+//                                Log.d(tag, "stateLocations centerX is " + stateLocation.get(k).centerX());
+//                            }
                             if(stateMatch){
                                 conditions.add(currentItem);
-                            //    Log.d(tag, "Condition is " + currentItem.getValue());
+                               // Log.d(tag, "Condition is " + currentItem.getValue());
                             }
 
 //                            if(currentItem.getValue().equals(statesName.get(0))){
@@ -188,41 +201,210 @@ public class FSMScaningActivity extends AppCompatActivity {
 
                         //Search for location
                         if (stateLocation.size() != 0){
-                            //Determine zone boundary
                             Rect firstState = stateLocation.get(0);
                             Rect secondState = stateLocation.get(1);
-                            int leftBoundary = firstState.right;
-                            int rightBoundary = secondState.left;
-                            int centreBoundary = (firstState.centerY() + firstState.centerY()) / 2;
-
-                            boolean noConditionTop = true;
-                            boolean noConditionBottom = true;
-                            //Thanushan: part that needs to be changed for 3/4 state fsm
-                            //Log.d(tag, "ConditionSize is " + conditions.size());
-                            for (int i = 0; i < conditions.size(); i++) {
-                                Rect currentBlock = conditions.get(i).getBoundingBox();
-                                String name = conditions.get(i).getValue();
-                                if (currentBlock.centerX() > leftBoundary && currentBlock.centerX() < rightBoundary) {
-                                    if (currentBlock.centerY() < centreBoundary) {
-                                        //Condition for state one to state two
-                                        if(noConditionTop){
-                                            noConditionTop = false;
-                                            booleanEquations.remove(0);
-                                            booleanEquations.add(0, statesName.get(0) + "+" + name + "=" + statesName.get(1));
-                                        } else {
-                                            booleanEquations.add(statesName.get(0) + "+" + name + "=" + statesName.get(1));
-                                        }
-                                    } else if (currentBlock.centerY() > centreBoundary) {
-                                        //Condition for state two to state one
-                                        if(noConditionBottom){
-                                            noConditionBottom = false;
-                                            booleanEquations.remove(1);
-                                            booleanEquations.add(1, statesName.get(1) + "+" + name + "=" + statesName.get(0));
-                                        } else {
-                                            booleanEquations.add(statesName.get(1) + "+" + name + "=" + statesName.get(0));
+                            if(statesName.size()==2) { //For 2 states
+                                //Determine zone boundary
+                                int leftBoundary = firstState.right;
+                                int rightBoundary = secondState.left;
+                                int centreBoundary = (firstState.centerY() + firstState.centerY()) / 2;//TT Change one to secondState
+                                boolean noConditionTop = true;
+                                boolean noConditionBottom = true;
+                                //Log.d(tag, "ConditionSize is " + conditions.size());
+                                for (int i = 0; i < conditions.size(); i++) {
+                                    Rect currentBlock = conditions.get(i).getBoundingBox();
+                                    String name = conditions.get(i).getValue();
+                                    Log.d(tag, "Condition is "+name);
+                                    if (currentBlock.centerX() > leftBoundary && currentBlock.centerX() < rightBoundary) {
+                                        if (currentBlock.centerY() < centreBoundary) {
+                                            //Condition for state one to state two
+                                            if (noConditionTop) {
+                                                noConditionTop = false;
+                                                booleanEquations.remove(0);
+                                                booleanEquations.add(0, statesName.get(0) + "+" + name + "=" + statesName.get(1));
+                                            } else {
+                                                booleanEquations.add(statesName.get(0) + "+" + name + "=" + statesName.get(1));
+                                            }
+                                        } else if (currentBlock.centerY() > centreBoundary) {
+                                            //Condition for state two to state one
+                                            if (noConditionBottom) {
+                                                noConditionBottom = false;
+                                                booleanEquations.remove(1);
+                                                booleanEquations.add(1, statesName.get(1) + "+" + name + "=" + statesName.get(0));
+                                            } else {
+                                                booleanEquations.add(statesName.get(1) + "+" + name + "=" + statesName.get(0));
+                                            }
                                         }
                                     }
                                 }
+                            } else if(statesName.size()==3){
+                                Rect thirdState = stateLocation.get(2);
+                                //Zone Boundaries
+                                int midXBoundary = secondState.centerX();
+                                int bottomYBoundary = (firstState.centerY()+thirdState.centerY())/2;
+                                int oneToTwoBoundaryX = (firstState.centerX()+secondState.centerX())/2;
+                                int oneToTwoBoundaryY = (firstState.centerY()+secondState.centerY())/2;//Can be used as midY
+                                int twoToThreeBoundaryX = (secondState.centerX()+thirdState.centerX())/2;
+                                int twoToThreeBoundaryY = (secondState.centerY()+thirdState.centerY())/2;//Can be used as midY
+                                int midYBoundary = (twoToThreeBoundaryY+oneToTwoBoundaryY)/2;
+                                int lowMidYBoundary = (midYBoundary+bottomYBoundary)/2;//Used for 3to1 condition
+                                boolean oneToTwo = true;
+                                boolean twoToThree = true;
+                                boolean threeToOne = true;
+                                Log.d(tag, "TopY is "+secondState.centerY());
+                                Log.d(tag, "MidY is "+midYBoundary);
+                                Log.d(tag, "BottomY is "+bottomYBoundary);
+                                Log.d(tag, "lowMidYBoundary is "+lowMidYBoundary);
+                                Log.d(tag, "FirstState X:"+firstState.centerX()+" and Y:"+firstState.centerY()+" and Top:"+firstState.top+" and Bottom:"+firstState.bottom);
+                                Log.d(tag, "SecondState X:"+secondState.centerX()+" and Y:"+secondState.centerY()+" and Top:"+secondState.top+" and Bottom:"+secondState.bottom);
+                                Log.d(tag, "ThirdState X:"+thirdState.centerX()+" and Y:"+thirdState.centerY()+" and Top:"+thirdState.top+" and Bottom:"+thirdState.bottom);
+                                Log.d(tag, "1to2X is "+oneToTwoBoundaryX);
+                                Log.d(tag, "1to2Y is "+oneToTwoBoundaryY);
+                                Log.d(tag, "2to3X is "+twoToThreeBoundaryX);
+                                Log.d(tag, "2to3Y is "+twoToThreeBoundaryY);
+                                for (int i = 0; i < conditions.size(); i++) {
+                                    Rect currentBlock = conditions.get(i).getBoundingBox();
+                                    String name = conditions.get(i).getValue();
+                                    Log.d(tag, "Condition is "+name+" with X:"+currentBlock.centerX()+" And Y:"+currentBlock.centerY()
+                                    +" and Left:"+currentBlock.left+" and Right:"+currentBlock.right+" and Top:"+currentBlock.top+" and Bottom:"
+                                    +currentBlock.bottom);
+                                    if(currentBlock.centerX()<oneToTwoBoundaryX //&& currentBlock.centerY()>secondState.centerY()
+                                            && currentBlock.centerY()<bottomYBoundary) {//State 1 to 2
+                                        if(oneToTwo){
+                                            oneToTwo = false;
+                                            booleanEquations.remove(0);
+                                            booleanEquations.add(0,statesName.get(0)+"+"+name+"="+statesName.get(1));
+                                        } else{
+                                            booleanEquations.add(statesName.get(0)+"+"+name+"="+statesName.get(1));
+                                        }
+                                    } else if(currentBlock.centerX()>twoToThreeBoundaryX && currentBlock.centerY()<bottomYBoundary){//State 2 to 3
+                                        if(twoToThree){
+                                            twoToThree = false;
+                                            booleanEquations.remove(1);
+                                            booleanEquations.add(1,statesName.get(1)+"+"+name+"="+statesName.get(2));
+                                        } else{
+                                            booleanEquations.add(statesName.get(1)+"+"+name+"="+statesName.get(2));
+                                        }
+                                    } else if(currentBlock.centerY()>bottomYBoundary){//State 3 to 1
+                                        if(threeToOne){
+                                            threeToOne = false;
+                                            booleanEquations.remove(2);
+                                            booleanEquations.add(2, statesName.get(2)+"+"+name+"="+statesName.get(0));
+                                        } else{
+                                            booleanEquations.add(statesName.get(2)+"+"+name+"="+statesName.get(0));
+                                        }
+
+                                    } else if(currentBlock.centerX()>oneToTwoBoundaryX && currentBlock.centerX()<secondState.centerX()
+                                            && currentBlock.centerY()<lowMidYBoundary){//State 2 to 1
+                                        booleanEquations.add(statesName.get(1)+"+"+name+"="+statesName.get(0));
+                                    } else if(currentBlock.centerX()<twoToThreeBoundaryX && currentBlock.centerX()>secondState.centerX()
+                                            &&currentBlock.centerY()<lowMidYBoundary){//State 3 to 2
+                                        booleanEquations.add(statesName.get(2)+"+"+name+"="+statesName.get(1));
+                                    } else if(currentBlock.centerY()>lowMidYBoundary && currentBlock.centerY()<bottomYBoundary){//State 1 to 3
+                                        booleanEquations.add(statesName.get(0)+"+"+name+"="+statesName.get(2));
+                                    }
+                                }
+                            } else if(statesName.size()>3){
+                                Rect thirdState = stateLocation.get(2);
+                                Rect fourthState = stateLocation.get(3);
+                                //Zone Boundaries
+                                int midXBoundary = secondState.centerX();
+                                int midYBoundary = (firstState.centerY()+thirdState.centerY())/2;
+                                int leftBoundary = firstState.left;
+                                int rightBoundary = thirdState.right;
+                                int topBoundary = secondState.top;
+                                int bottomBoundary = fourthState.bottom;
+                                int oneToTwoBoundaryX = (firstState.centerX()+secondState.centerX())/2;
+                                int oneToTwoBoundaryY = (firstState.centerY()+secondState.centerY())/2;
+                                int twoToThreeBoundaryX = (secondState.centerX()+thirdState.centerX())/2;
+                                int twoToThreeBoundaryY = (secondState.centerY()+thirdState.centerY())/2;
+                                int threeToFourBoundaryX = (thirdState.centerX()+fourthState.centerX())/2;
+                                int threeToFourBoundaryY = (thirdState.centerY()+fourthState.centerY())/2;
+                                int fourToOneBoundaryX = (fourthState.centerX()+firstState.centerX())/2;
+                                int fourToOneBoundaryY = (fourthState.centerY()+firstState.centerY())/2;
+                                int offset = firstState.bottom-firstState.top;
+
+                                boolean oneToTwo = true;
+                                boolean twoToThree = true;
+                                boolean threeToFour = true;
+                                boolean fourToOne = true;
+                                Log.d(tag,"Offset is: "+offset);
+                                Log.d(tag,"MidY is "+midYBoundary);
+                                Log.d(tag, "FirstState X:"+firstState.centerX()+" and Y:"+firstState.centerY()+" and Top:"+firstState.top+" and Bottom:"+firstState.bottom);
+                                Log.d(tag, "SecondState X:"+secondState.centerX()+" and Y:"+secondState.centerY()+" and Top:"+secondState.top+" and Bottom:"+secondState.bottom);
+                                Log.d(tag, "ThirdState X:"+thirdState.centerX()+" and Y:"+thirdState.centerY()+" and Top:"+thirdState.top+" and Bottom:"+thirdState.bottom);
+                                Log.d(tag, "FourthState X:"+fourthState.centerX()+" and Y:"+fourthState.centerY()+" and Top:"+fourthState.top+" and Bottom:"+fourthState.bottom);
+                                Log.d(tag, "1to2X is "+oneToTwoBoundaryX);
+                                Log.d(tag, "1to2Y is "+oneToTwoBoundaryY);
+                                Log.d(tag, "2to3X is "+twoToThreeBoundaryX);
+                                Log.d(tag, "2to3Y is "+twoToThreeBoundaryY);
+                                Log.d(tag, "3to4X is "+threeToFourBoundaryX);
+                                Log.d(tag, "3to4Y is "+threeToFourBoundaryY);
+                                Log.d(tag, "4to1X is "+fourToOneBoundaryX);
+                                Log.d(tag, "4to1Y is "+fourToOneBoundaryY);
+                                for (int i = 0; i < conditions.size(); i++) {
+                                    Rect currentBlock = conditions.get(i).getBoundingBox();
+                                    String name = conditions.get(i).getValue();
+                                    Log.d(tag, "Condition is "+name+" with X:"+currentBlock.centerX()+" And Y:"+currentBlock.centerY()
+                                            +" and Left:"+currentBlock.left+" and Right:"+currentBlock.right+" and Top:"+currentBlock.top+" and Bottom:"
+                                            +currentBlock.bottom);
+                                    if(currentBlock.centerX()<oneToTwoBoundaryX && currentBlock.centerY()<midYBoundary){//State 1 to 2
+                                        if(oneToTwo){
+                                            oneToTwo = false;
+                                            booleanEquations.remove(0);
+                                            booleanEquations.add(0,statesName.get(0)+"+"+name+"="+statesName.get(1));
+                                        } else{
+                                            booleanEquations.add(0,statesName.get(0)+"+"+name+"="+statesName.get(1));
+                                        }
+                                    } else if(currentBlock.centerX()>twoToThreeBoundaryX && currentBlock.centerY()<midYBoundary){//State 2 to 3
+                                        if(twoToThree){
+                                            twoToThree = false;
+                                            booleanEquations.remove(1);
+                                            booleanEquations.add(1,statesName.get(1)+"+"+name+"="+statesName.get(2));
+                                        }else{
+                                            booleanEquations.add(1,statesName.get(1)+"+"+name+"="+statesName.get(2));
+                                        }
+                                    } else if(currentBlock.centerX()>threeToFourBoundaryX && currentBlock.centerY()>midYBoundary){//State 3 to 4
+                                        if(threeToFour){
+                                            threeToFour = false;
+                                            booleanEquations.remove(2);
+                                            booleanEquations.add(2,statesName.get(2)+"+"+name+"="+statesName.get(3));
+                                        }else{
+                                            booleanEquations.add(2,statesName.get(2)+"+"+name+"="+statesName.get(3));
+                                        }
+                                    } else if(currentBlock.centerX()<fourToOneBoundaryX && currentBlock.centerY()>midYBoundary) {//State 4 to 1
+                                        if(fourToOne){
+                                            fourToOne = false;
+                                            booleanEquations.remove(3);
+                                            booleanEquations.add(3,statesName.get(3)+"+"+name+"="+statesName.get(0));
+                                        } else{
+                                            booleanEquations.add(3,statesName.get(3)+"+"+name+"="+statesName.get(0));
+                                        }
+                                    } else if(currentBlock.centerX()>oneToTwoBoundaryX && currentBlock.centerX()<midXBoundary
+                                            && currentBlock.centerY()>topBoundary && currentBlock.centerY()<firstState.top-offset) {//State 2 to 1
+                                        booleanEquations.add(statesName.get(1)+"+"+name+"="+statesName.get(0));
+                                    } else if(currentBlock.centerX()<twoToThreeBoundaryX && currentBlock.centerX()>midXBoundary
+                                            && currentBlock.centerY()>topBoundary && currentBlock.centerY()<firstState.top-offset) {//State 3 to 2
+                                        booleanEquations.add(statesName.get(2)+"+"+name+"="+statesName.get(1));
+                                    } else if(currentBlock.centerX()>fourToOneBoundaryX && currentBlock.centerX()<midXBoundary
+                                            && currentBlock.centerY()<bottomBoundary && currentBlock.centerY()>firstState.bottom+offset) {//State 1 to 4
+                                        booleanEquations.add(statesName.get(0)+"+"+name+"="+statesName.get(3));
+                                    } else if(currentBlock.centerX()<threeToFourBoundaryX && currentBlock.centerX()>midXBoundary
+                                            && currentBlock.centerY()<bottomBoundary && currentBlock.centerY()>firstState.bottom+offset) {//State 4 to 3
+                                        booleanEquations.add(statesName.get(3)+"+"+name+"="+statesName.get(2));
+                                    } else if(currentBlock.centerX()>leftBoundary && currentBlock.centerX()<midXBoundary
+                                            && currentBlock.centerY()>(firstState.top-offset) && currentBlock.centerY()<firstState.bottom+offset) {//State 4 to 2
+                                        booleanEquations.add(statesName.get(3)+"+"+name+"="+statesName.get(1));
+                                    } else if(currentBlock.centerX()<rightBoundary && currentBlock.centerX()>midXBoundary
+                                            && currentBlock.centerY()>(firstState.top-offset) && currentBlock.centerY()<firstState.bottom+offset) {//State 2 to 4
+                                        booleanEquations.add(statesName.get(1)+"+"+name+"="+statesName.get(3));
+                                    } else if(currentBlock.centerY()<topBoundary) {//State 1 to 3
+                                        booleanEquations.add(statesName.get(0)+"+"+name+"="+statesName.get(2));
+                                    } else if(currentBlock.centerY()>bottomBoundary) {//State 3 to 1
+                                        booleanEquations.add(statesName.get(2)+"+"+name+"="+statesName.get(0));
+                                    }
+                                }
+
                             }
 
                         }

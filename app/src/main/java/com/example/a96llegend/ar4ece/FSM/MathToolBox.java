@@ -25,6 +25,7 @@ public class MathToolBox {
 //            path.add(i+step, secondHalf.get(i));
 //        }
 //        return path;
+
         List<Float[]> firstHalf = pathForOnePart(origin, destination, radiusFirstPart);
         List<Float[]> path = new ArrayList<Float[]>();
         for(int i = 0; i < step; i++){
@@ -150,8 +151,13 @@ public class MathToolBox {
 //            if(YstepSize<0){
 //                YstepSize= YstepSize * -1;
 //            }
+//            int oldOffset = states.get(fsm.getAllStateName().get(oldState)).right-states.get(fsm.getAllStateName().get(oldState)).left;
+//            int newOffset = states.get(fsm.getAllStateName().get(newState)).right-states.get(fsm.getAllStateName().get(newState)).left;
+            int Xoffset = 2*(stopPoint.right-stopPoint.left);
+            int Yoffset = 2*(stopPoint.bottom-stopPoint.top);
+//            int newOffset = stopPoint.right-stopPoint.left;
             for(int i = 0; i < step; i++){
-                Float[] xy = {(startPoint.centerX() + (XstepSize * i)), (startPoint.centerY() - (YstepSize * i))};
+                Float[] xy = {(startPoint.centerX() + Xoffset+(XstepSize * i)), (startPoint.centerY() +Yoffset- (YstepSize * i))};
                 path.add(i,xy);
             }
         } else { //arc

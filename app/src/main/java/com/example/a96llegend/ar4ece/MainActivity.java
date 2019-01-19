@@ -4,12 +4,20 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import java.util.ArrayList;
+import java.util.List;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
+import android.widget.Toast;
+import android.widget.AdapterView.OnItemSelectedListener;
+
 
 import com.example.a96llegend.ar4ece.FSM.StateEnteringActivity;
 import com.example.a96llegend.ar4ece.Gate.GateActivity;
 import com.example.a96llegend.ar4ece.Resistor.ResistorActivity;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

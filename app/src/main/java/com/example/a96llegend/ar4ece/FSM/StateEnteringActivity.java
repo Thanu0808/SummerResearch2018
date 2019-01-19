@@ -6,7 +6,10 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.a96llegend.ar4ece.R;
@@ -14,14 +17,21 @@ import com.example.a96llegend.ar4ece.R;
 import java.util.ArrayList;
 import java.util.List;
 //The view provided to the user for entering state names
-public class StateEnteringActivity extends AppCompatActivity {
+public class StateEnteringActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     private static final String tag = "=======Debug=======";
-
+    private static String text = "stickigure";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_state_entering);
+
+        //Spinner
+        Spinner spinner = (Spinner) findViewById(R.id.spinner);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,R.array.avatars,android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(this);
     }
 
     //To scan activity
@@ -95,7 +105,20 @@ public class StateEnteringActivity extends AppCompatActivity {
             //To next activity
             Intent intent = new Intent(this, FSMScaningActivity.class);
             intent.putStringArrayListExtra("stateList", allState);
+             intent.putExtra("avatar",text);
             startActivity(intent);
         }
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        text = parent.getItemAtPosition(position).toString();
+        Toast.makeText(parent.getContext(), text, Toast.LENGTH_SHORT).show();
+       // intent.putExtra("avatar",text);
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
     }
 }

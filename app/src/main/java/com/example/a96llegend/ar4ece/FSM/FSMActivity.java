@@ -5,8 +5,13 @@ import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.pm.PackageManager;
+import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.PixelFormat;
+import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.AnimationDrawable;
@@ -60,11 +65,22 @@ public class FSMActivity extends AppCompatActivity {
     private static ImageView arrowView;
     private static ImageView locatorView;
     private static ImageView locatorView2;
+    private static ImageView locatorView3;
+    private static ImageView locatorView4;
+    private static ImageView locatorView5;
     private static ImageView mAnimationView;
     private static Button input1Button;
     private static Button input2Button;
     private static Button input3Button;
     private static Button input4Button;
+    private static Button input5Button;
+    private static Button input6Button;
+    private static Button input7Button;
+    private static Button input8Button;
+    private static Button input9Button;
+    private static Button input10Button;
+    private static Button input11Button;
+    private static Button input12Button;
 
     //Lists for storing components' position
     //All states. note: first one always is the first state
@@ -98,11 +114,22 @@ public class FSMActivity extends AppCompatActivity {
         arrowView = (ImageView) findViewById(R.id.arrow);
         locatorView = (ImageView) findViewById(R.id.locator);
         locatorView2 = (ImageView) findViewById(R.id.locator2);
+        locatorView3 = (ImageView) findViewById(R.id.locator3);
+        locatorView4 = (ImageView) findViewById(R.id.locator4);
+        locatorView5 = (ImageView) findViewById(R.id.locator5);
         mAnimationView = (ImageView) findViewById(R.id.AnimationView);
         input1Button = (Button) findViewById(R.id.input1);
         input2Button = (Button) findViewById(R.id.input2);
         input3Button = (Button) findViewById(R.id.input3);
         input4Button = (Button) findViewById(R.id.input4);
+        input5Button = (Button) findViewById(R.id.input5);
+        input6Button = (Button) findViewById(R.id.input6);
+        input7Button = (Button) findViewById(R.id.input7);
+        input8Button = (Button) findViewById(R.id.input8);
+        input9Button = (Button) findViewById(R.id.input9);
+        input10Button = (Button) findViewById(R.id.input10);
+        input11Button = (Button) findViewById(R.id.input11);
+        input12Button = (Button) findViewById(R.id.input12);
 
         //Initialise animation
         runAnimation = false;
@@ -126,6 +153,7 @@ public class FSMActivity extends AppCompatActivity {
         //Start camera
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         startCameraSource();
+//        startTransparentView();
     }
 
     @Override
@@ -137,6 +165,7 @@ public class FSMActivity extends AppCompatActivity {
         arrowView.setVisibility(View.GONE);
         mAnimationView.setVisibility(View.GONE);
         setButtons();
+//        startTransparentView();
     }
 
     @Override
@@ -149,7 +178,7 @@ public class FSMActivity extends AppCompatActivity {
         soundPlayer.stopSound(currentStreamID);
     }
 
-    private void startCameraSource() {
+            private void startCameraSource() {
         //Create the TextRecognizer
         final TextRecognizer textRecognizer = new TextRecognizer.Builder(getApplicationContext()).build();
 
@@ -248,19 +277,56 @@ public class FSMActivity extends AppCompatActivity {
                             //Determine zone boundary
                             Rect firstState = states.get(fsm.getAllStateName().get(0));
                             Rect secondState = states.get(fsm.getAllStateName().get(1));
-                            int leftBoundary = firstState.right;
-                            int rightBoundary = secondState.left;
-                            int centreBoundary = (firstState.centerY() + firstState.centerY()) / 2;
+                            if(fsm.getAllStateName().size()==2) { //For 2 states
+                                int leftBoundary = firstState.right;
+                                int rightBoundary = secondState.left;
+                                int centreBoundary = (firstState.centerY() + firstState.centerY()) / 2;
 
-                            for (int i = 0; i < conditions.size(); i++) {
-                                Rect currentBlock = conditions.get(i).getBoundingBox();
-                                String name = conditions.get(i).getValue();
+                                for (int i = 0; i < conditions.size(); i++) {
+                                    Rect currentBlock = conditions.get(i).getBoundingBox();
+                                    String name = conditions.get(i).getValue();
 
-                                if (currentBlock.centerX() > leftBoundary && currentBlock.centerX() < rightBoundary) {
-                                    if (currentBlock.centerY() < centreBoundary) {
+                                    if (currentBlock.centerX() > leftBoundary && currentBlock.centerX() < rightBoundary) {
+                                        if (currentBlock.centerY() < centreBoundary) {
+                                            topZone.put(name, currentBlock);
+                                        } //else if (currentBlock.centerY() > centreBoundary) {
+//                                        bottomZone.put(name, currentBlock);
+//                                    }
+                                    }
+                                }
+                            }else if(fsm.getAllStateName().size()==3){
+                                Rect thirdState = states.get(fsm.getAllStateName().get(2));
+                                //Zone Boundaries
+                                int midXBoundary = secondState.centerX();
+                                int bottomYBoundary = (firstState.centerY()+thirdState.centerY())/2;
+                                int oneToTwoBoundaryX = (firstState.centerX()+secondState.centerX())/2;
+                                int oneToTwoBoundaryY = (firstState.centerY()+secondState.centerY())/2;//Can be used as midY
+                                int twoToThreeBoundaryX = (secondState.centerX()+thirdState.centerX())/2;
+                                int twoToThreeBoundaryY = (secondState.centerY()+thirdState.centerY())/2;//Can be used as midY
+                                int midYBoundary = (twoToThreeBoundaryY+oneToTwoBoundaryY)/2;
+                                int lowMidYBoundary = (midYBoundary+bottomYBoundary)/2;//Used for 3to1 condition
+                                boolean oneToTwo = true;
+                                boolean twoToThree = true;
+                                boolean threeToOne = true;
+                                for (int i = 0; i < conditions.size(); i++) {
+                                    Rect currentBlock = conditions.get(i).getBoundingBox();
+                                    String name = conditions.get(i).getValue();
+                                    if(currentBlock.centerX()<oneToTwoBoundaryX //&& currentBlock.centerY()>secondState.centerY()
+                                            && currentBlock.centerY()<bottomYBoundary) {//State 1 to 2
                                         topZone.put(name, currentBlock);
-                                    } else if (currentBlock.centerY() > centreBoundary) {
-                                        bottomZone.put(name, currentBlock);
+                                    } else if(currentBlock.centerX()>twoToThreeBoundaryX && currentBlock.centerY()<bottomYBoundary){//State 2 to 3
+                                        topZone.put(name, currentBlock);
+                                    } else if(currentBlock.centerY()>bottomYBoundary){//State 3 to 1
+                                        topZone.put(name, currentBlock);
+
+                                    } else if(currentBlock.centerX()>oneToTwoBoundaryX && currentBlock.centerX()<secondState.centerX()
+                                            && currentBlock.centerY()<lowMidYBoundary){//State 2 to 1
+                                        topZone.put(name, currentBlock);
+                                    } else if(currentBlock.centerX()<twoToThreeBoundaryX && currentBlock.centerX()>secondState.centerX()
+                                            &&currentBlock.centerY()<lowMidYBoundary){//State 3 to 2
+                                        topZone.put(name, currentBlock);
+                                    } else if(currentBlock.centerY()>lowMidYBoundary && currentBlock.centerY()<bottomYBoundary){//State 1 to 3
+                                        topZone.put(name, currentBlock);
                                     }
                                 }
                             }
@@ -274,13 +340,26 @@ public class FSMActivity extends AppCompatActivity {
     //=====================================View===============================================
     private void setOverlay(){
         if (runAnimation){ //Arrow when running animation
-//            int offset = states.get(fsm.getAllStateName().get(0)).right-states.get(fsm.getAllStateName().get(0)).left;
-//            locatorView.setX(states.get(fsm.getAllStateName().get(0)).right+offset);
-//            locatorView.setY(states.get(fsm.getAllStateName().get(0)).centerY());
-//
-//            int offset2 = states.get(fsm.getAllStateName().get(1)).right-states.get(fsm.getAllStateName().get(1)).left;
-//            locatorView2.setX(states.get(fsm.getAllStateName().get(1)).right+offset2);
-//            locatorView2.setY(states.get(fsm.getAllStateName().get(1)).centerY());
+            //State1 with offset
+            int offset = states.get(fsm.getAllStateName().get(0)).right-states.get(fsm.getAllStateName().get(0)).left;
+            locatorView.setX(states.get(fsm.getAllStateName().get(2)).left);//+offset);
+            locatorView.setY(states.get(fsm.getAllStateName().get(2)).top);
+            //State2 with offset
+            int offset2 = states.get(fsm.getAllStateName().get(1)).right-states.get(fsm.getAllStateName().get(1)).left;
+            locatorView2.setX(states.get(fsm.getAllStateName().get(1)).centerX());//+offset2);
+            locatorView2.setY(states.get(fsm.getAllStateName().get(0)).centerY());
+            //State3 offset
+            int offset3 = states.get(fsm.getAllStateName().get(2)).right-states.get(fsm.getAllStateName().get(2)).left;
+            locatorView3.setX(states.get(fsm.getAllStateName().get(1)).right);//+offset2);
+            locatorView3.setY(states.get(fsm.getAllStateName().get(1)).bottom);
+            //State1 no offset center
+            int offset4 = states.get(fsm.getAllStateName().get(2)).right-states.get(fsm.getAllStateName().get(2)).left;
+            locatorView4.setX(states.get(fsm.getAllStateName().get(0)).right);
+            locatorView4.setY(states.get(fsm.getAllStateName().get(0)).bottom);
+            //State1 no offset but right
+            int offset5 = states.get(fsm.getAllStateName().get(2)).right-states.get(fsm.getAllStateName().get(2)).left;
+            locatorView5.setX(states.get(fsm.getAllStateName().get(2)).right);
+            locatorView5.setY(states.get(fsm.getAllStateName().get(2)).bottom);
 
             //Use UI thread to turn on the arrow
             Activity uiActivity = (Activity)FSMActivity.this;
@@ -339,6 +418,46 @@ public class FSMActivity extends AppCompatActivity {
         } else {
             input4Button.setVisibility(View.GONE);
         }
+        if(allInput.size() > 4 && allInput.get(4) != null) {
+            input5Button.setText(allInput.get(4) + "=" + booleanToInt(fsm.getInputValueByName(allInput.get(4))));
+        } else {
+            input5Button.setVisibility(View.GONE);
+        }
+        if(allInput.size() > 5 && allInput.get(5) != null) {
+            input6Button.setText(allInput.get(5) + "=" + booleanToInt(fsm.getInputValueByName(allInput.get(5))));
+        } else {
+            input6Button.setVisibility(View.GONE);
+        }
+        if(allInput.size() > 6 && allInput.get(6) != null) {
+            input7Button.setText(allInput.get(6) + "=" + booleanToInt(fsm.getInputValueByName(allInput.get(6))));
+        } else {
+            input7Button.setVisibility(View.GONE);
+        }
+        if(allInput.size() > 7 && allInput.get(7) != null) {
+            input8Button.setText(allInput.get(7) + "=" + booleanToInt(fsm.getInputValueByName(allInput.get(7))));
+        } else {
+            input8Button.setVisibility(View.GONE);
+        }
+        if(allInput.size() > 8 && allInput.get(8) != null) {
+            input9Button.setText(allInput.get(8) + "=" + booleanToInt(fsm.getInputValueByName(allInput.get(8))));
+        } else {
+            input9Button.setVisibility(View.GONE);
+        }
+        if(allInput.size() > 9 && allInput.get(9) != null) {
+            input10Button.setText(allInput.get(9) + "=" + booleanToInt(fsm.getInputValueByName(allInput.get(9))));
+        } else {
+            input10Button.setVisibility(View.GONE);
+        }
+        if(allInput.size() > 10 && allInput.get(10) != null) {
+            input11Button.setText(allInput.get(10) + "=" + booleanToInt(fsm.getInputValueByName(allInput.get(10))));
+        } else {
+            input11Button.setVisibility(View.GONE);
+        }
+        if(allInput.size() > 11 && allInput.get(11) != null) {
+            input12Button.setText(allInput.get(11) + "=" + booleanToInt(fsm.getInputValueByName(allInput.get(11))));
+        } else {
+            input12Button.setVisibility(View.GONE);
+        }
     }
 
     //Button for input1
@@ -373,19 +492,33 @@ public class FSMActivity extends AppCompatActivity {
         }
     }
 
+    //Button for input5
+    public void pressInput5 (View view){
+        if(!runAnimation) { //Disable input change when running animation
+            String name = fsm.getAllInputName().get(4);
+            input5Button.setText(name + "=" + booleanToInt(fsm.triggerInputChangeAndGetNewValue(name)));
+        }
+    }
+
+    //Button for input6
+    public void pressInput6 (View view){
+        if(!runAnimation) { //Disable input change when running animation
+            String name = fsm.getAllInputName().get(5);
+            input6Button.setText(name + "=" + booleanToInt(fsm.triggerInputChangeAndGetNewValue(name)));
+        }
+    }
+
     //Button for trigger next state
     public void pressNext (View view){
         if(!runAnimation) {
             int oldState = fsm.getCurrentStateAsIndex();
             String conditionToFind = fsm.triggerStateChange();
             int newState = fsm.getCurrentStateAsIndex();
-           // Log.d(tag, "Test 0");
+            int offset = states.get(fsm.getAllStateName().get(oldState)).right-states.get(fsm.getAllStateName().get(oldState)).left;
             if(oldState!=newState){
-             //   Log.d(tag, "Test 1");
                 animationStep=0;
-                mAnimationView.setX(states.get(fsm.getAllStateName().get(oldState)).centerX() - 40);
-                mAnimationView.setY(states.get(fsm.getAllStateName().get(oldState)).centerY() - 40);
-             //   Log.d(tag, "Test 2");
+                mAnimationView.setX(states.get(fsm.getAllStateName().get(oldState)).centerX()); //- 40+offset);
+                mAnimationView.setY(states.get(fsm.getAllStateName().get(oldState)).centerY()); //- 40);
                 //If condition = "-", set the middle point in the middle, so that travel in a straight line
                 if(conditionToFind.equals("-")){
 //                    Log.d(tag, "Test 3,New State is" + Integer.toString(newState));
@@ -393,23 +526,27 @@ public class FSMActivity extends AppCompatActivity {
                   //  Log.d(tag, "X is:" + Integer.toString(states.get(fsm.getAllStateName().get(newState)).centerX()));
                     int x = (states.get(fsm.getAllStateName().get(oldState)).centerX()+
                             states.get(fsm.getAllStateName().get(newState)).centerX()) / 2;
-              //      Log.d(tag, "Test X");
                     int y = (states.get(fsm.getAllStateName().get(oldState)).centerY()+
                             states.get(fsm.getAllStateName().get(newState)).centerY()) / 2;
-              //      Log.d(tag, "Test Y");
                     Rect middle = new Rect(x - 20, y - 20, x + 20, y + 20);
-              //      Log.d(tag, "Test 4");
                     animationPath = MathToolBox.pathCalculator(states.get(fsm.getAllStateName().get(oldState)),
                             middle, states.get(fsm.getAllStateName().get(newState)));
-             //       Log.d(tag, "Test 5");
                 } else {//TT
-               //     Log.d(tag, "WTF");
-                    animationPath = MathToolBox.pathCalculator(states.get(fsm.getAllStateName().get(0)),
-                            topZone.get(conditionToFind), states.get(fsm.getAllStateName().get(1)));//THIS iS CAUSING CRASH CAUSE NOT BOTTOM ZONE ON 2nd part
+//                    if(oldState==0) {
+                        animationPath = MathToolBox.pathCalculator(states.get(fsm.getAllStateName().get(oldState)),
+                                states.get(fsm.getAllStateName().get(oldState))  , states.get(fsm.getAllStateName().get(newState))); //changed middle from  topZone.get(conditionToFind)
+//                    } else{
+//                        animationPath = MathToolBox.pathCalculator(states.get(fsm.getAllStateName().get(oldState)),
+//                                bottomZone.get(conditionToFind), states.get(fsm.getAllStateName().get(newState)));
+//                    }
+
                 }
-              //  Log.d(tag, "Test 6");
-                startAnimation(0); //Left to right TT
-                //Log.d(tag, "Test 7");
+                if(states.get(fsm.getAllStateName().get(newState)).centerX()>states.get(fsm.getAllStateName().get(oldState)).centerX()){
+                    startAnimation(0); //If newState X is greater than oldState X make animation face the left
+                } else {
+                    startAnimation(1);
+                }
+
  //           }
             //---------------------Determine what should be run
 //            if (oldState == 0 && newState == 1) {
@@ -452,13 +589,13 @@ public class FSMActivity extends AppCompatActivity {
 //                }
 //                startAnimation(1); //Right to left
 
-            } else if (oldState == 1 && newState == 1){ //state at state 2
+            } else if (oldState == newState){ //state at state 2
                 animationStep = 0;
-                mAnimationView.setX(states.get(fsm.getAllStateName().get(1)).right - 40);
-                mAnimationView.setY(states.get(fsm.getAllStateName().get(1)).centerY() - 40);
-                animationPath = MathToolBox.pathForNotStateChange(states.get(fsm.getAllStateName().get(1)), false);
+                mAnimationView.setX(states.get(fsm.getAllStateName().get(oldState)).right - 40);
+                mAnimationView.setY(states.get(fsm.getAllStateName().get(oldState)).centerY() - 40);
+                animationPath = MathToolBox.pathForNotStateChange(states.get(fsm.getAllStateName().get(oldState)), false);
                 startAnimation(1);
-
+//dont need this else if
             } else if (oldState == 0 && newState == 0){ //state at state 1
                 animationStep = 0;
                 mAnimationView.setX(states.get(fsm.getAllStateName().get(0)).left - 40);
