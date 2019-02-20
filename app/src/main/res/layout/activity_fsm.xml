@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".FSM.FSMActivity"
+    android:screenOrientation="landscape">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="16dp"
+        tools:ignore="MissingConstraints">
+
+        <SurfaceView
+            android:id="@+id/CameraView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"></SurfaceView>
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left|bottom"
+            android:layout_marginBottom="0dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/input1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginBottom="0dp"
+                android:layout_weight="1"
+                android:onClick="pressInput1"
+                android:textAllCaps="false" />
+
+            <Button
+                android:id="@+id/input2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginBottom="0dp"
+                android:layout_weight="1"
+                android:onClick="pressInput2"
+                android:textAllCaps="false" />
+
+            <Button
+                android:id="@+id/input3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginBottom="0dp"
+                android:layout_weight="1"
+                android:onClick="pressInput3"
+                android:textAllCaps="false" />
+
+            <Button
+                android:id="@+id/input4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginBottom="0dp"
+                android:layout_weight="1"
+                android:onClick="pressInput4"
+                android:textAllCaps="false" />
+
+            <Button
+                android:id="@+id/input5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginBottom="0dp"
+                android:layout_weight="1"
+                android:onClick="pressInput5"
+                android:textAllCaps="false" />
+
+            <Button
+                android:id="@+id/input6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginBottom="0dp"
+                android:layout_weight="1"
+                android:onClick="pressInput6"
+                android:textAllCaps="false" />
+
+            <Button
+                android:id="@+id/input7"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginBottom="0dp"
+                android:layout_weight="1"
+                android:onClick="pressInput7"
+                android:textAllCaps="false" />
+
+            <Button
+                android:id="@+id/input8"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginBottom="0dp"
+                android:layout_weight="1"
+                android:onClick="pressInput8"
+                android:textAllCaps="false" />
+
+            <Button
+                android:id="@+id/input9"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginBottom="0dp"
+                android:layout_weight="1"
+                android:onClick="pressInput9"
+                android:textAllCaps="false" />
+
+            <Button
+                android:id="@+id/input10"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginBottom="0dp"
+                android:layout_weight="1"
+                android:onClick="pressInput10"
+                android:textAllCaps="false" />
+
+            <Button
+                android:id="@+id/input11"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginBottom="0dp"
+                android:layout_weight="1"
+                android:onClick="pressInput11"
+                android:textAllCaps="false" />
+
+            <Button
+                android:id="@+id/input12"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginBottom="0dp"
+                android:layout_weight="1"
+                android:onClick="pressInput12"
+                android:textAllCaps="false" />
+
+            <Button
+                android:id="@+id/input15"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginBottom="0dp"
+                android:layout_weight="1"
+                android:onClick="pressInput15"
+                android:textAllCaps="false" />
+
+            <Button
+                android:id="@+id/input13"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginBottom="0dp"
+                android:layout_weight="1"
+                android:onClick="pressInput13"
+                android:textAllCaps="false" />
+
+            <Button
+                android:id="@+id/input14"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginBottom="0dp"
+                android:layout_weight="1"
+                android:onClick="pressInput14"
+                android:textAllCaps="false" />
+        </LinearLayout>
+
+        </HorizontalScrollView>
+
+        <LinearLayout
+            android:layout_width="197dp"
+            android:layout_height="101dp"
+            android:layout_gravity="right|bottom"
+            android:layout_marginBottom="0dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/nextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="5dp"
+                android:layout_marginBottom="0dp"
+                android:layout_weight="1"
+                android:onClick="pressNext"
+                android:text="@string/fsm_next_button"
+                android:textAllCaps="false" />
+
+            <Button
+                android:id="@+id/resetButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="5dp"
+                android:layout_marginBottom="0dp"
+                android:layout_weight="1"
+                android:onClick="pressReset"
+                android:text="@string/fsm_reset_button"
+                android:textAllCaps="false" />
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/arrow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/green_arrow" />
+
+        <ImageView
+            android:id="@+id/AnimationView"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:screenOrientation="landscape"></ImageView>
+
+        <ImageView
+            android:id="@+id/locator"
+            android:layout_width="22dp"
+            android:layout_height="32dp"
+            app:srcCompat="@drawable/animation_rl_frame2" />
+
+        <ImageView
+            android:id="@+id/locator2"
+            android:layout_width="22dp"
+            android:layout_height="32dp"
+            app:srcCompat="@drawable/animation_rl_frame2" />
+
+        <ImageView
+            android:id="@+id/locator3"
+            android:layout_width="22dp"
+            android:layout_height="32dp"
+            app:srcCompat="@drawable/animation_rl_frame2" />
+
+        <ImageView
+            android:id="@+id/locator4"
+            android:layout_width="22dp"
+            android:layout_height="32dp"
+            app:srcCompat="@drawable/animation_rl_frame2" />
+
+        <ImageView
+            android:id="@+id/locator5"
+            android:layout_width="22dp"
+            android:layout_height="32dp"
+            app:srcCompat="@drawable/animation_rl_frame2" />
+
+        <EditText
+            android:id="@+id/CurrentState"
+            android:layout_width="158dp"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:textColorLink="@color/common_google_signin_btn_text_dark_default"
+            android:cursorVisible="false"/>
+
+    </FrameLayout>
+</android.support.constraint.ConstraintLayout>
